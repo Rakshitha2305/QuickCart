@@ -29,10 +29,10 @@ const Navbar = () => {
         <Link href="/" className="hover:text-gray-900 transition">
           About Us
         </Link>
-        <Link href="/" className="hover:text-gray-900 transition">
+        <Link href="/contact" className="hover:text-gray-900 transition">
           Contact
         </Link>
-
+        
         {isSeller && <button onClick={() => router.push('/seller')} className="text-xs border px-4 py-1.5 rounded-full">Seller Dashboard</button>}
 
       </div>
@@ -76,6 +76,7 @@ const Navbar = () => {
           <UserButton.MenuItems>
              <UserButton.Action label="My Orders" labelIcon={<BagIcon/>} onClick={()=> router.push('/my-orders')} />
           </UserButton.MenuItems>
+
         </UserButton>
         </>
        : <button onClick={openSignIn} className="flex items-center gap-2 hover:text-gray-900 transition">
