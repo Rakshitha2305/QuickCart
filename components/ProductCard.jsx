@@ -4,9 +4,12 @@ import Image from 'next/image';
 import { useAppContext } from '@/context/AppContext';
 import toast from "react-hot-toast";
 
+import axios from "axios";
 
 
-const ProductCard = ({ product }) => {
+
+
+const ProductCard = ({ product, showDelete = false }) => {
 
    // const { currency, router } = useAppContext()
 
@@ -16,12 +19,16 @@ const {
   router,
   user,
   favourites,
+  setProducts,
   toggleFavourite
 } = useAppContext();
 
 
 
 const isFavourite = favourites?.includes(product._id);
+const isOwner = user && product.userId === user.id;
+
+
 
 const handleFavourite = (e) => {
   e.stopPropagation(); // prevent navigation
@@ -36,6 +43,30 @@ const handleFavourite = (e) => {
   toast.success(
     isFavourite ? "Removed from favourites" : "Added to favourites ❤️"
   );
+};
+
+
+
+
+const handleDelete = async (e) => {
+  e.stopPropagation();
+
+  if (!confirm("Are you sure you want to delete this product?")) return;
+
+  try {
+    await axios.post("/api/product/delete", {
+      productId: product._id,
+    });
+
+    // ✅ REMOVE PRODUCT FROM UI
+    setProducts((prev) =>
+      prev.filter((p) => p._id !== product._id)
+    );
+
+    toast.success("Product deleted");
+  } catch (error) {
+    toast.error("Failed to delete product");
+  }
 };
 
 
@@ -64,27 +95,25 @@ const handleFavourite = (e) => {
                 </button> */}
 
 
-                    <button
-  type="button"
-  onClick={handleFavourite}
-  className="absolute top-2 right-2 z-30 bg-white p-2 rounded-full shadow-md"
->
+                <button
+                    type="button"
+                    onClick={handleFavourite}
+                    className="absolute top-2 right-2 z-30 bg-white p-2 rounded-full shadow-md"
+                >
   {/* <Image
     className="h-3 w-3"
     src={isFavourite ? assets.heart_filled_icon : assets.heart_icon}
     alt="heart_icon"
   /> */}
 
-<Image
-  src={assets.heart_icon}
-  alt="heart_icon"
-  className={`h-3 w-3 pointer-events-none transition ${
-    isFavourite ? "invert sepia saturate-500 hue-rotate-330" : ""
-  }`}
-/>
-
-</button>
-
+                <Image
+                    src={assets.heart_icon}
+                    alt="heart_icon"
+                    className={`h-3 w-3 pointer-events-none transition ${
+                    isFavourite ? "invert sepia saturate-500 hue-rotate-330" : ""
+                }`}
+                />
+                </button>
             </div>
 
             <p className="md:text-base font-medium pt-2 w-full truncate">{product.name}</p>

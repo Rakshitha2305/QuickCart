@@ -177,7 +177,8 @@ export const AppContextProvider = (props) => {
     const value = {
         user, getToken,
         favourites,
-toggleFavourite,
+        toggleFavourite,
+        setProducts,
         currency, router,
         isSeller, setIsSeller,
         userData, fetchUserData,

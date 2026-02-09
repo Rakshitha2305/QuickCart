@@ -19,7 +19,7 @@ const ProductList = () => {
     try {
       
       const token = await getToken()
-      const { data } = await axios.get('/api/product/seller-list',{headers: {Authorrization: `Bearer ${token}`}})
+      const { data } = await axios.get('/api/product/seller-list',{headers: {Authorization: `Bearer ${token}`}})
       if(data.success){
         setProducts(data.products)
         setLoading(false)
@@ -31,6 +31,36 @@ const ProductList = () => {
       toast.error(error.message)
     }
   }
+
+
+
+  const handleDelete = async (productId) => {
+  if (!confirm("Are you sure you want to delete this product?")) return;
+
+  try {
+    const token = await getToken();
+
+    const { data } = await axios.post(
+      "/api/product/delete",
+      { productId },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    if (data.success) {
+      setProducts((prev) =>
+        prev.filter((p) => p._id !== productId)
+      );
+      toast.success("Product deleted");
+    } else {
+      toast.error(data.message);
+    }
+  } catch (error) {
+    toast.error("Failed to delete product");
+  }
+};
+
+
+
 
   useEffect(() => {
     if(user){
@@ -73,16 +103,23 @@ const ProductList = () => {
                   </td>
                   <td className="px-4 py-3 max-sm:hidden">{product.category}</td>
                   <td className="px-4 py-3">${product.offerPrice}</td>
-                  <td className="px-4 py-3 max-sm:hidden">
-                    <button onClick={() => router.push(`/product/${product._id}`)} className="flex items-center gap-1 px-1.5 md:px-3.5 py-2 bg-orange-600 text-white rounded-md">
-                      <span className="hidden md:block">Visit</span>
-                      <Image
-                        className="h-3.5"
-                        src={assets.redirect_icon}
-                        alt="redirect_icon"
-                      />
-                    </button>
-                  </td>
+                  <td className="px-4 py-3 max-sm:hidden flex gap-2">
+  <button
+    onClick={() => router.push(`/product/${product._id}`)}
+    className="flex items-center gap-1 px-3 py-2 bg-orange-600 text-white rounded-md"
+  >
+    <span className="hidden md:block">Visit</span>
+    <Image className="h-3.5" src={assets.redirect_icon} alt="redirect_icon" />
+  </button>
+
+  <button
+    onClick={() => handleDelete(product._id)}
+    className="px-3 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+  >
+    Delete
+  </button>
+</td>
+
                 </tr>
               ))}
             </tbody>
