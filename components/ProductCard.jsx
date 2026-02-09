@@ -2,10 +2,45 @@ import React from 'react'
 import { assets } from '@/assets/assets'
 import Image from 'next/image';
 import { useAppContext } from '@/context/AppContext';
+import toast from "react-hot-toast";
+
+
 
 const ProductCard = ({ product }) => {
 
-    const { currency, router } = useAppContext()
+   // const { currency, router } = useAppContext()
+
+
+const {
+  currency,
+  router,
+  user,
+  favourites,
+  toggleFavourite
+} = useAppContext();
+
+
+
+const isFavourite = favourites?.includes(product._id);
+
+const handleFavourite = (e) => {
+  e.stopPropagation(); // prevent navigation
+
+  if (!user) {
+    toast.error("Please login to add favourites");
+    return;
+  }
+
+  toggleFavourite(product._id);
+
+  toast.success(
+    isFavourite ? "Removed from favourites" : "Added to favourites ❤️"
+  );
+};
+
+
+
+
 
     return (
         <div
@@ -20,13 +55,36 @@ const ProductCard = ({ product }) => {
                     width={800}
                     height={800}
                 />
-                <button className="absolute top-2 right-2 bg-white p-2 rounded-full shadow-md">
+                {/* <button className="absolute top-2 right-2 bg-white p-2 rounded-full shadow-md">
                     <Image
                         className="h-3 w-3"
                         src={assets.heart_icon}
                         alt="heart_icon"
                     />
-                </button>
+                </button> */}
+
+
+                    <button
+  type="button"
+  onClick={handleFavourite}
+  className="absolute top-2 right-2 z-30 bg-white p-2 rounded-full shadow-md"
+>
+  {/* <Image
+    className="h-3 w-3"
+    src={isFavourite ? assets.heart_filled_icon : assets.heart_icon}
+    alt="heart_icon"
+  /> */}
+
+<Image
+  src={assets.heart_icon}
+  alt="heart_icon"
+  className={`h-3 w-3 pointer-events-none transition ${
+    isFavourite ? "invert sepia saturate-500 hue-rotate-330" : ""
+  }`}
+/>
+
+</button>
+
             </div>
 
             <p className="md:text-base font-medium pt-2 w-full truncate">{product.name}</p>

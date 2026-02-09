@@ -16,6 +16,8 @@ export const AppContextProvider = (props) => {
 
     const currency = process.env.NEXT_PUBLIC_CURRENCY
     const router = useRouter()
+    const [favourites, setFavourites] = useState([]);
+
 
     const {user} =useUser()
     const {getToken} = useAuth()
@@ -55,6 +57,9 @@ export const AppContextProvider = (props) => {
         if(data.success){
             setUserData(data.user)
             setCartItems(data.user.cartItems)
+            setFavourites(
+               data.user.favourites?.map((id) => id.toString()) || []
+            )
         }
         else{
             toast.error(data.message)
@@ -132,6 +137,33 @@ export const AppContextProvider = (props) => {
         return Math.floor(totalAmount * 100) / 100;
     }
 
+
+    const toggleFavourite = async (productId) => {
+  if (!user) return;
+
+  try {
+    const token = await getToken();
+
+    const { data } = await axios.post(
+      "/api/user/favourite",
+      { productId },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    if (data.success) {
+      setFavourites((prev) =>
+        data.isFavourite
+          ? [...prev, productId]
+          : prev.filter((id) => id !== productId)
+      );
+    }
+  } catch (error) {
+    toast.error("Failed to update favourites");
+  }
+};
+
+
+
     useEffect(() => {
         fetchProductData()
     }, [])
@@ -144,6 +176,8 @@ export const AppContextProvider = (props) => {
 
     const value = {
         user, getToken,
+        favourites,
+toggleFavourite,
         currency, router,
         isSeller, setIsSeller,
         userData, fetchUserData,
