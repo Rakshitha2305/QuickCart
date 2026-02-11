@@ -152,11 +152,26 @@ const fetchProductData = async (search = "", category = "all") => {
     const getCartAmount = () => {
         let totalAmount = 0;
         for (const items in cartItems) {
-            let itemInfo = products.find((product) => product._id === items);
-            if (cartItems[items] > 0) {
-                totalAmount += itemInfo.offerPrice * cartItems[items];
-            }
-        }
+        //     let itemInfo = products.find((product) => product._id === items);
+        //     if (cartItems[items] > 0) {
+        //         totalAmount += itemInfo.offerPrice * cartItems[items];
+        //     }
+        // }
+            const quantity = cartItems[items];
+
+    if (quantity > 0) {
+      const itemInfo = products.find(
+        (product) => product._id === items
+      );
+
+      // 🛑 product might be deleted
+      if (!itemInfo) continue;
+
+      totalAmount += itemInfo.offerPrice * quantity;
+    }
+  }
+
+
         return Math.floor(totalAmount * 100) / 100;
     }
 

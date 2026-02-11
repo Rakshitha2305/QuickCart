@@ -16,13 +16,13 @@ const Navbar = () => {
 
 
 
-useEffect(() => {
-  const delay = setTimeout(() => {
-    router.push(`/all-products?search=${search}&category=all`);
-  }, 400);
+// useEffect(() => {
+//   const delay = setTimeout(() => {
+//     router.push(`/all-products?search=${search}&category=all`);
+//   }, 400);
 
-  return () => clearTimeout(delay);
-}, [search]);
+//   return () => clearTimeout(delay);
+// }, [search]);
 
 
 
@@ -63,6 +63,12 @@ useEffect(() => {
     placeholder="Search..."
     value={search}
     onChange={(e) => setSearch(e.target.value)}
+    onKeyDown={(e) => {
+      if (e.key === "Enter" && search.trim()) {
+        router.push(`/all-products?search=${search}`);
+        setSearch("");
+      }
+    }}
     className="outline-none text-sm w-32 lg:w-40"
   />
   <Image
