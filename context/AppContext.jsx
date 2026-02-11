@@ -27,21 +27,44 @@ export const AppContextProvider = (props) => {
     const [isSeller, setIsSeller] = useState(false)
     const [cartItems, setCartItems] = useState({})
 
-    const fetchProductData = async () => {
-        try {
+    // const fetchProductData = async () => {
+    //     try {
             
-            const {data}= await axios.get('/api/product/list')
+    //         const {data}= await axios.get('/api/product/list')
 
-            if(data.success){
-                setProducts(data.products)
-            }else{
-                toast.error(data.message)
-            }
+    //         if(data.success){
+    //             setProducts(data.products)
+    //         }else{
+    //             toast.error(data.message)
+    //         }
 
-        } catch (error) {
-            toast.error(error.message)
-        }
+    //     } catch (error) {
+    //         toast.error(error.message)
+    //     }
+    // }
+
+
+
+
+
+const fetchProductData = async (search = "", category = "all") => {
+  try {
+    const { data } = await axios.get(
+      `/api/product/list?search=${search}&category=${category}`
+    );
+
+    if (data.success) {
+      setProducts(data.products);
+    } else {
+      toast.error(data.message);
     }
+  } catch (error) {
+    toast.error(error.message);
+  }
+};
+
+
+
 
     const fetchUserData = async () => {
         try {
@@ -164,9 +187,9 @@ export const AppContextProvider = (props) => {
 
 
 
-    useEffect(() => {
-        fetchProductData()
-    }, [])
+    // useEffect(() => {
+    //     fetchProductData()
+    // }, [])
 
     useEffect(() => {
         if(user){

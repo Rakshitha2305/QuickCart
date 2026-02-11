@@ -1,5 +1,7 @@
 "use client"
-import React from "react";
+import { useEffect } from "react";
+
+import React , { useState } from "react";
 import { assets, BagIcon, BoxIcon, CartIcon, HomeIcon, HeartIcon} from "@/assets/assets";
 import Link from "next/link"
 import { useAppContext } from "@/context/AppContext";
@@ -10,6 +12,20 @@ const Navbar = () => {
 
   const { isSeller, router ,user } = useAppContext();
   const {openSignIn}=useClerk();
+  const [search, setSearch] = useState("");
+
+
+
+useEffect(() => {
+  const delay = setTimeout(() => {
+    router.push(`/all-products?search=${search}&category=all`);
+  }, 400);
+
+  return () => clearTimeout(delay);
+}, [search]);
+
+
+
 
   return (
     <nav className="flex items-center justify-between px-6 md:px-16 lg:px-32 py-3 border-b border-gray-300 text-gray-700">
@@ -38,7 +54,32 @@ const Navbar = () => {
       </div>
 
       <ul className="hidden md:flex items-center gap-4 ">
-        <Image className="w-4 h-4" src={assets.search_icon} alt="search icon" />
+        {/* <Image className="w-4 h-4" src={assets.search_icon} alt="search icon" /> */}
+
+
+<div className="flex items-center border rounded-md px-2 py-1">
+  <input
+    type="text"
+    placeholder="Search..."
+    value={search}
+    onChange={(e) => setSearch(e.target.value)}
+    className="outline-none text-sm w-32 lg:w-40"
+  />
+  <Image
+    className="w-4 h-4 cursor-pointer"
+    src={assets.search_icon}
+    alt="search icon"
+    onClick={() => {
+      if (search.trim()) {
+        router.push(`/all-products?search=${search}`);
+        setSearch("");
+      }
+    }}
+  />
+</div>
+
+
+
        {
        user
         ? <>
