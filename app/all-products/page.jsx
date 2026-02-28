@@ -1,28 +1,39 @@
 'use client'
 export const dynamic = "force-dynamic";
+import { Suspense } from "react";
 
 import ProductCard from "@/components/ProductCard";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useAppContext } from "@/context/AppContext";
 
-import { useSearchParams } from "next/navigation";
+//import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 
 
 const AllProducts = () => {
 
     const { products ,fetchProductData} = useAppContext();
-    const searchParams = useSearchParams();
+//    const searchParams = useSearchParams();
 
+
+// useEffect(() => {
+//   const searchQuery = searchParams.get("search") || "";
+//   const categoryQuery = searchParams.get("category") || "all";
+
+//   fetchProductData(searchQuery, categoryQuery);
+// }, [searchParams]);
 
 useEffect(() => {
-  const searchQuery = searchParams.get("search") || "";
-  const categoryQuery = searchParams.get("category") || "all";
+  if (typeof window !== "undefined") {
+    const params = new URLSearchParams(window.location.search);
 
-  fetchProductData(searchQuery, categoryQuery);
-}, [searchParams]);
+    const searchQuery = params.get("search") || "";
+    const categoryQuery = params.get("category") || "all";
 
+    fetchProductData(searchQuery, categoryQuery);
+  }
+}, []);
 
     return (
         <>
@@ -51,3 +62,4 @@ useEffect(() => {
 };
 
 export default AllProducts;
+
